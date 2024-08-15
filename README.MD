@@ -50,7 +50,13 @@ The project is structured to use Terraform for provisioning AWS resources, inclu
 - Terraform installed on your local machine.
 
 ### Deployment Steps
+## Instructions to Build and Run
 
+### Clone the Repository
+   ```bash
+   git clone https://github.com/RichieTheDev/hello-richie.git
+   cd hello-richie
+   ```
 1. **Initialize Terraform:**
 
    - Navigate to the `terraform` directory:
