@@ -46,7 +46,6 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 The project is structured to use Terraform for provisioning AWS resources, including a VPC, subnets, security groups, and an EKS cluster. The main Terraform configuration files are located in the root of the directory
 
 - **`variables.tf`**: Contains all the input variables used in the Terraform configuration.
-- **`terraform.tfvars`**: Contains the values for the input variables, tailored for the development environment.
 - **`main.tf`**: Main Terraform configuration file to set up the AWS provider and modules for VPC, EKS, and security groups.
 - **`outputs.tf`**: Defines the output variables for the Terraform configuration, such as VPC ID and EKS cluster endpoint.
 
