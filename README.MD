@@ -82,27 +82,63 @@ The project is structured to use Terraform for provisioning AWS resources, inclu
    - A Kubernetes deployment configuration (`Deployment`) is provided in the YAML format.
    - The deployment uses a Docker image (`robinsthedev/cors-anywhere:latest`) to run the CORS proxy service.
 
-2. **Apply Deployment:**
+2. **Install kubectl:**
+
+   - Install `kubectl` by following the instructions [here](https://kubernetes.io/docs/tasks/tools/).
+
+3. **Apply Deployment:**
 
    - Use `kubectl` to apply the deployment:
      ```bash
-     kubectl apply -f ./k8/deployment.yaml
+     kubectl apply -f k8/deployment.yaml
      ```
    - The deployment configuration will create a pod with the specified resource requests and limits.
 
-3. **Expose the Service:**
+4. **Expose the Service:**
 
    - Apply the Service configuration to expose the CORS proxy via a LoadBalancer:
      ```bash
-     kubectl apply -f ./k8/service.yaml
+     kubectl apply -f k8/service.yaml
      ```
 
-4. **Horizontal Pod Autoscaler (HPA):**
+5. **Horizontal Pod Autoscaler (HPA):**
+
    - The HPA configuration is also provided to scale the service based on CPU utilization.
    - Apply the HPA:
      ```bash
-     kubectl apply -f ./k8/hpa.yaml
+     kubectl apply -f k8/hpa.yaml
      ```
+
+6. **Check the Status**
+
+```bash
+kubectl get deployments
+kubectl get services
+kubectl get hpa
+```
+
+7. **Access the CORS Proxy**
+
+- LoadBalancer service type might take a few minutes for the external IP to be assigned. You can check the status by running:
+
+```bash
+kubectl get services
+```
+
+8. **Monitor and Debug**
+
+```bash
+kubectl logs deployment/cors-proxy
+kubectl describe deployment cors-proxy
+```
+
+9. **Test and Validate**
+
+- Test the CORS proxy to ensure it's working as expected. You can send requests to the external IP or domain of your service.
+
+```bash
+curl http://<external-ip-or-domain>/your-endpoint
+```
 
 ## Load Testing
 
