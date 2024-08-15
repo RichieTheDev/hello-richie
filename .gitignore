@@ -4,6 +4,7 @@
 
 # Ignore Terraform workspace files
 .terraform/
+terraform/.terraform
 
 # Ignore crash log files
 crash.log
