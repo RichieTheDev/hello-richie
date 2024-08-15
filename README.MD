@@ -158,7 +158,7 @@ curl http://<external-ip-or-domain>/your-endpoint
 
    - A sample `k6` script is provided to test the CORS proxy service under various loads:
      ```bash
-     k6 run ./load-testing/load-test-script.js
+     k6 run load-testing/load-test-script.js
      ```
    - The script simulates gradual traffic increase and measures response times.
 
