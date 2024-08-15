@@ -24,14 +24,22 @@ This document outlines the process of deploying a Kubernetes cluster using Infra
      - `AmazonS3FullAccess`
      - `AmazonSNSFullAccess`
    - Assign the role to the Lambda function and other AWS resources.
+### Install AWS CLI 
 
-3. **S3 Bucket Configuration:**
+As the first step, you need to install AWS CLI as we will use the AWS CLI (`aws configure`) command to connect Terraform with AWS in the next steps.
+
+Follow the below link to Install AWS CLI.
+```
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+```
+
+3. **Terraform Installation:**
+   - Install Terraform by following the instructions [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+4. **S3 Bucket Configuration:**
 
    - Create an S3 bucket to store Lambda deployment packages.
    - Ensure the bucket has the correct permissions, and access is not restricted.
 
-4. **Terraform Installation:**
-   - Install Terraform by following the instructions [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
 ### Infrastructure as Code Configuration
 
