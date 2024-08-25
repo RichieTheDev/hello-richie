@@ -18,12 +18,6 @@ This document outlines the process of deploying a Kubernetes cluster using Infra
 
 1. **Create an AWS Account:** If you don’t have an AWS account, sign up at [aws.amazon.com](https://aws.amazon.com/).
 2. **Configure IAM Role:**
-
-   - Create an IAM role with the necessary policies attached:
-     - `AWSLambdaBasicExecutionRole`
-     - `AmazonS3FullAccess`
-     - `AmazonSNSFullAccess`
-   - Assign the role to the Lambda function and other AWS resources.
 ### Install AWS CLI 
 
 As the first step, you need to install AWS CLI as we will use the AWS CLI (`aws configure`) command to connect Terraform with AWS in the next steps.
@@ -35,10 +29,6 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
 3. **Terraform Installation:**
    - Install Terraform by following the instructions [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
-4. **S3 Bucket Configuration:**
-
-   - Create an S3 bucket to store Lambda deployment packages.
-   - Ensure the bucket has the correct permissions, and access is not restricted.
 
 
 ### Infrastructure as Code Configuration
