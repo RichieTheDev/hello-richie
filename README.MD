@@ -17,7 +17,7 @@ This document outlines the process of deploying a Kubernetes cluster using Infra
 ### AWS Account Setup
 
 1. **Create an AWS Account:** If you don’t have an AWS account, sign up at [aws.amazon.com](https://aws.amazon.com/).
-2. **Configure IAM Role:**
+
 ### Install AWS CLI 
 
 As the first step, you need to install AWS CLI as we will use the AWS CLI (`aws configure`) command to connect Terraform with AWS in the next steps.
