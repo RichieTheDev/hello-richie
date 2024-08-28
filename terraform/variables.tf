@@ -1,64 +1,29 @@
 variable "aws_region" {
-  description = "AWS Region"
+  description = "The AWS region where resources will be deployed"
   type        = string
+  default     = "us-east-1"
 }
 
 variable "cidr_block" {
   description = "CIDR block for the VPC"
   type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "private_subnets_cidr" {
+  description = "List of private subnet CIDRs"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "public_subnets_cidr" {
-  description = "CIDR blocks for the public subnets"
+  description = "List of public subnet CIDRs"
   type        = list(string)
-}
-
-variable "availability_zones" {
-  description = "Availability zones for the subnets"
-  type        = list(string)
-}
-
-variable "cluster_name" {
-  description = "EKS Cluster name"
-  type        = string
+  default     = ["10.0.4.0/24", "10.0.5.0/24"]
 }
 
 variable "cluster_version" {
-  description = "EKS Cluster version"
+  description = "EKS Cluster Version"
   type        = string
-}
-
-variable "cluster_addons" {
-  description = "Cluster addons configuration"
-  type        = map(any)
-}
-
-variable "instance_types" {
-  description = "Instance types for EKS"
-  type        = list(string)
-}
-
-variable "ami_type" {
-  description = "AMI type for EKS managed nodes"
-  type        = string
-}
-
-variable "min_size" {
-  description = "Minimum size of the EKS node group"
-  type        = number
-}
-
-variable "max_size" {
-  description = "Maximum size of the EKS node group"
-  type        = number
-}
-
-variable "desired_size" {
-  description = "Desired size of the EKS node group"
-  type        = number
-}
-
-variable "tags" {
-  description = "Tags for the EKS resources"
-  type        = map(string)
+  default     = "1.30"
 }
