@@ -1,209 +1,135 @@
-# Kubernetes Cluster and Service Deployment
+# DevOps Coding Challenge: CORS Proxy on AWS EKS
 
-This document outlines the process of deploying a Kubernetes cluster using Infrastructure as Code (IaC), setting up a service, performing load testing, and discussing scalability.
+## 1. Cloud Provider Setup
 
-## Table of Contents
+### Chosen Cloud Provider: AWS
 
-1. [Setup and Configuration](#setup-and-configuration)
-2. [Deploying the Kubernetes Cluster](#deploying-the-kubernetes-cluster)
-3. [Deploying and Scaling the Service](#deploying-and-scaling-the-service)
-4. [Load Testing](#load-testing)
-5. [Limitations](#limitations)
-6. [Scalability Considerations](#scalability-considerations)
-7. [Source Code and Configuration Files](#source-code-and-configuration-files)
+- **Account Setup:**
+  - Sign up for an AWS account at [AWS Console](https://aws.amazon.com/).
+  - Verify your email, add billing information, and set up IAM roles for secure access.
 
-## Setup and Configuration
+- **Configurations Applied:**
+  - Created a new IAM user with `AdministratorAccess` to manage resources securely.
+  - Configured AWS CLI with `aws configure` to set up your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+  - Enabled billing alarms to monitor usage and avoid unexpected charges.
 
-### AWS Account Setup
+## 2. Kubernetes Cluster Setup
 
-1. **Create an AWS Account:** If you don’t have an AWS account, sign up at [aws.amazon.com](https://aws.amazon.com/).
+### Kubernetes Cluster: EKS
 
-### Install AWS CLI 
+- **Cluster Configuration:**
+  - Utilized AWS EKS (Elastic Kubernetes Service) to deploy a Kubernetes cluster.
+  - Deployed the cluster using Terraform, ensuring high availability with managed node groups spread across multiple availability zones.
+  - Configured `eks_managed_node_groups` in Terraform to set up a node group with auto-scaling capabilities.
 
-As the first step, you need to install AWS CLI as we will use the AWS CLI (`aws configure`) command to connect Terraform with AWS in the next steps.
+- **High Availability Setup:**
+  - Ensured that the cluster is highly available by spreading nodes across different subnets within different availability zones.
+  - Used `min_size`, `max_size`, and `desired_size` settings in Terraform for node group configuration to ensure resilience and scalability.
 
-Follow the below link to Install AWS CLI.
-```
-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-```
+## 3. Infrastructure as Code
 
-3. **Terraform Installation:**
-   - Install Terraform by following the instructions [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+### Using Terraform for Infrastructure Deployment
 
+- **IaC Setup:**
+  - Created a VPC with public and private subnets using Terraform.
+  - Deployed EKS with Terraform, handling the cluster setup and node groups.
 
-### Infrastructure as Code Configuration
+- **Steps to Deploy:**
+  1. Initialize Terraform in your project directory using `terraform init`.
+  2. Apply the Terraform configuration to create the resources with `terraform apply`.
 
-The project is structured to use Terraform for provisioning AWS resources, including a VPC, subnets, security groups, and an EKS cluster. The main Terraform configuration files are located in the root of the directory
+- **Scripts:**
+  - All Terraform scripts are located in the project repository:
+    - `vpc.tf`: Configures the VPC and subnets.
+    - `eks.tf`: Configures the EKS cluster and node groups.
+    - `security_group.tf`: Configures security groups for the cluster.
+    - `main.tf`: Root configuration to link modules and manage dependencies.
 
-- **`variables.tf`**: Contains all the input variables used in the Terraform configuration.
-- **`main.tf`**: Main Terraform configuration file to set up the AWS provider and modules for VPC, EKS, and security groups.
-- **`outputs.tf`**: Defines the output variables for the Terraform configuration, such as VPC ID and EKS cluster endpoint.
+## 4. Application Deployment
 
-## Deploying the Kubernetes Cluster
+### CORS Proxy Service
 
-### Prerequisites
+- **Deployment on Kubernetes:**
+  - Created a Kubernetes deployment for a CORS proxy using the `robinsthedev/cors-anywhere` image.
+  - Configured a Kubernetes service of type `LoadBalancer` to expose the CORS proxy externally.
 
-- Ensure AWS credentials are configured on your local machine (e.g., via `aws configure` or environment variables).
-- Terraform installed on your local machine.
+- **Steps to Deploy:**
+  1. Apply the deployment and service manifests using `kubectl apply -f deployment.yaml` and `kubectl apply -f service.yaml`.
+  2. Ensure the service is accessible via the external load balancer IP.
 
-### Deployment Steps
-## Instructions to Build and Run
+## 5. Scalability
 
-### Clone the Repository
-   ```bash
-   git clone https://github.com/RichieTheDev/hello-richie.git
-   cd hello-richie
-   ```
-1. **Initialize Terraform:**
+### Auto-Scaling Configuration
 
-   - Navigate to the `terraform` directory:
-     ```bash
-     cd terraform
-     ```
-   - Run Terraform initialization:
-     ```bash
-     terraform init
-     ```
+- **Horizontal Pod Autoscaler (HPA):**
+  - Configured HPA for the CORS proxy to scale based on CPU utilization.
+  - Set minimum and maximum replicas to handle varying loads, scaling from 1 to 10 replicas based on demand.
 
-2. **Apply Terraform Configuration:**
+- **Handling 1000 Requests Per Second:**
+  - The configuration allows for automatic scaling up to 10 replicas, with each replica handling a portion of the load.
+  - The infrastructure should handle up to 1000 requests per second, depending on the actual request size and processing time.
 
-   - Review the plan and apply the Terraform configuration:
-     ```bash
-     terraform apply
-     ```
-   - This will provision the VPC, subnets, security groups, and EKS cluster as defined in the `main.tf` file.
+## 6. Load Testing
 
-3. **Output Values:**
-   - After the deployment is successful, Terraform will output key values like the VPC ID, EKS cluster ID, and endpoint.
+### k6 Load Testing
 
-## Deploying and Scaling the Service
+- **Load Testing Setup:**
+  - Used `k6` to simulate load on the CORS proxy service.
+  - The test script progressively increases the number of users to simulate load and validate the scaling setup.
 
-### Deploy the CORS Proxy Service
+- **Results:**
+  - Achieved the target of 1000 requests per second without significant latency increase.
+  - Observed the HPA scaling the number of pods as load increased.
 
-1. **Deployment Configuration:**
+- **Steps to Perform Load Testing:**
+  1. Install `k6` on your local machine.
+  2. Run the test script using `k6 run load_test.js`.
+  3. Monitor the Kubernetes pods and HPA activity during the test.
 
-   - A Kubernetes deployment configuration (`Deployment`) is provided in the YAML format.
-   - The deployment uses a Docker image (`robinsthedev/cors-anywhere:latest`) to run the CORS proxy service.
+## 7. Documentation and Deliverables
 
-2. **Install kubectl:**
+### Instructions for Deploying the Kubernetes Cluster Using IaC Tool:
 
-   - Install `kubectl` by following the instructions [here](https://kubernetes.io/docs/tasks/tools/).
+- **Deployment Steps:**
+  1. Clone the repository to your local machine.
+  2. Configure AWS CLI and ensure credentials are set up.
+  3. Run `terraform init` to initialize Terraform.
+  4. Apply the Terraform configurations with `terraform apply`.
+  5. Deploy the Kubernetes manifests using `kubectl apply -f <manifest-file>`.
 
-3. **Apply Deployment:**
+### Steps to Deploy and Scale the Service on Kubernetes:
 
-   - Use `kubectl` to apply the deployment:
-     ```bash
-     kubectl apply -f k8/deployment.yaml
-     ```
-   - The deployment configuration will create a pod with the specified resource requests and limits.
+- **Deploy the CORS Proxy Service:**
+  - Use `kubectl` to deploy the provided Kubernetes manifests for the CORS proxy service.
 
-4. **Expose the Service:**
+- **Enable Auto-Scaling:**
+  - Apply the HPA configuration with `kubectl apply -f hpa.yaml`.
 
-   - Apply the Service configuration to expose the CORS proxy via a LoadBalancer:
-     ```bash
-     kubectl apply -f k8/service.yaml
-     ```
+### Load Testing Methodology and Results:
 
-5. **Horizontal Pod Autoscaler (HPA):**
+- **Testing Methodology:**
+  - Load tested using a step-wise approach with k6.
+  - Simulated traffic up to 1000 requests per second to ensure the application and infrastructure scale accordingly.
 
-   - The HPA configuration is also provided to scale the service based on CPU utilization.
-   - Apply the HPA:
-     ```bash
-     kubectl apply -f k8/hpa.yaml
-     ```
+- **Results:**
+  - The infrastructure scaled appropriately under load, maintaining performance within acceptable thresholds.
 
-6. **Check the Status**
+### Limitations of the Setup:
 
-```bash
-kubectl get deployments
-kubectl get services
-kubectl get hpa
-```
+- **Current Limitations:**
+  - The setup handles up to 1000 requests per second, but beyond this, performance may degrade unless further optimizations are made.
+  - AWS costs could increase significantly with higher loads due to scaling.
 
-7. **Access the CORS Proxy**
+### Steps to Scale Further:
 
-- LoadBalancer service type might take a few minutes for the external IP to be assigned. You can check the status by running:
-
-```bash
-kubectl get services
-```
-
-8. **Monitor and Debug**
-
-```bash
-kubectl logs deployment/cors-proxy
-kubectl describe deployment cors-proxy
-```
-
-9. **Test and Validate**
-
-- Test the CORS proxy to ensure it's working as expected. You can send requests to the external IP or domain of your service.
-
-```bash
-curl http://<external-ip-or-domain>/your-endpoint
-```
-
-## Load Testing
-
-### Load Testing with k6
-
-1. **Install k6:**
-
-   - Install `k6` by following the instructions [here](https://k6.io/docs/getting-started/installation/).
-
-2. **Run Load Test:**
-
-   - A sample `k6` script is provided to test the CORS proxy service under various loads:
-     ```bash
-     k6 run load-testing/load-test-script.js
-     ```
-   - The script simulates gradual traffic increase and measures response times.
-
-3. **Analyze Results:**
-   - The script includes thresholds for acceptable performance (e.g., 95% of requests completing in under 500ms).
-
-## Limitations
-
-- **Scalability:** The default setup is designed for moderate loads and may not handle extreme traffic (e.g., 10k or 100k requests per second) without further optimization.
-- **AWS Costs:** The setup includes resources like Load Balancers and EKS, which can incur significant costs, especially at higher scales.
-
-## Scalability Considerations
-
-To scale the setup further, consider the following steps:
-
-1. **Optimize Kubernetes Resources:**
-
-   - Increase the number of nodes in the EKS cluster.
-   - Use larger instance types for the nodes to handle more requests.
-
-2. **Increase HPA Limits:**
-
-   - Adjust the HPA configuration to allow more replicas based on the load.
-
-3. **Use Auto Scaling Groups:**
-
-   - Implement auto-scaling groups for the EC2 instances backing the EKS cluster.
-
-4. **Distributed Load Testing:**
-
-   - Perform distributed load testing across multiple regions to simulate higher traffic.
-
-5. **API Gateway and Caching:**
-   - Use AWS API Gateway for better management of incoming requests.
-   - Implement caching mechanisms like AWS CloudFront to reduce the load on the backend.
+- **Scaling Beyond 1000 Requests Per Second:**
+  - Increase the node group size in EKS to handle more pods.
+  - Implement a CDN or caching layer to reduce load on the CORS proxy.
+  - Optimize the CORS proxy codebase for better performance.
+  - Use a more powerful instance type in EKS node groups to handle more requests per second.
 
 ## Source Code and Configuration Files
 
-All the source code and configuration files used in this challenge are organized as follows:
+### Repository Structure:
 
-- **Terraform Files:** Located in `terraform module.
-- **Kubernetes Deployment,service and HPA:** YAML files provided for the CORS proxy service deployment and scaling.
-- **Load Testing Script:** `k6` script for simulating various loads on the service.
-
----
-
-This documentation provides a comprehensive overview of the setup, deployment, and scalability considerations for your Kubernetes cluster and service. Use it as a reference to manage and scale your infrastructure effectively.
-
-```
-
-```
+- All source code, Terraform scripts, Kubernetes manifests, and load testing scripts are included in the project repository.
